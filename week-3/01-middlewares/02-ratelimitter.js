@@ -16,6 +16,25 @@ setInterval(() => {
     numberOfRequestsForUser = {};
 }, 1000)
 
+app.use((req,res,next)=>{
+  if(numberOfRequestsForUser[req.header['user-id']]){
+    numberOfRequestsForUser[req.header['user-id']]+=1
+  
+  
+  if(numberOfRequestsForUser[req.header['user-id']]>5){
+    res.status(404).json({
+      message:"error 404"
+    })
+  }else{
+    next()
+  }
+}else{
+  numberOfRequestsForUser[req.header['user-id']]=1
+  next()
+}
+  
+})
+
 app.get('/user', function(req, res) {
   res.status(200).json({ name: 'john' });
 });
@@ -24,4 +43,4 @@ app.post('/user', function(req, res) {
   res.status(200).json({ msg: 'created dummy user' });
 });
 
-module.exports = app;
+module.exports=app
